@@ -1,4 +1,2 @@
-X86_CC_FLAGS =
-
 X86_SOURCES += \
 	$(X86_BOOT_DIR)/boot.S

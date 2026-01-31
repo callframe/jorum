@@ -93,6 +93,8 @@ ECHO := $ECHO
 RM := $RM
 RM_FLAGS := $RM_FLAGS
 
+## Methods
+
 define notice
 ${TAB}\$(Q)\$(ECHO) "${TAB}\$1\$(notdir \$2)"
 endef

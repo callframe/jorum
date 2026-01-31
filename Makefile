@@ -28,10 +28,10 @@ JORUM := $(WORKING_DIR)/jorum
 all: $(JORUM)
 
 %.o: %.S
-	$(call compile_c,$<,$@,$(X86_CC_FLAGS))
+	$(call compile_c,$<,$@)
 
 %.o: %.c
-	$(call compile_c,$<,$@,$(X86_CC_FLAGS))
+	$(call compile_c,$<,$@)
 
 $(JORUM): $(JORUM_ARCHIVES)
 	$(call link_objs,$(JORUM_ARCHIVES),$@)
