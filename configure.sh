@@ -6,7 +6,7 @@ CONFIG_DIR="$WORKING_DIR/config"
 BUILD_DIR="$WORKING_DIR/build"
 
 HELPERS_SH="$CONFIG_DIR/helpers.sh"
-MAKEFILE="$WORKING_DIR/Makefile"
+MAKEFILE="$WORKING_DIR/config.mk"
 
 USE_LLVM=1
 TARGET_ARCH="x86_64"
@@ -88,8 +88,12 @@ MKDIR_FLAGS := $MKDIR_FLAGS
 
 ECHO := $ECHO
 
+define notice
+${TAB}\$(Q)\$(ECHO) "${TAB}\$1\$(notdir \$2)"
+endef
+
 define make_dir
-${TAB}\$(Q)\$(ECHO) "${TAB}MKDIR \$1"
+${TAB}\$(call notice,"MKDIR ",\$1)
 ${TAB}\$(Q)\$(MKDIR) \$(MKDIR_FLAGS) \$1
 endef
 
@@ -102,8 +106,5 @@ define archive_objs
 ${TAB}\$(Q)\$(ECHO) "${TAB}AR \$2"
 ${TAB}\$(Q)\$(AR) \$(AR_FLAGS) \$2 \$1
 endef
-
-\$(BUILD_DIR):
-${TAB}\$(call make_dir,\$(BUILD_DIR))
 
 EOF
