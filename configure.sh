@@ -122,4 +122,12 @@ ${TAB}\$(call notice,RM ,\$1)
 ${TAB}\$(Q)\$(RM) \$(RM_FLAGS) \$1
 endef
 
+define c2objs
+${TAB}\$(patsubst %.c,%.o,\$(filter %.c,\$1))
+endef
+
+define asm2objs
+${TAB}\$(patsubst %.S,%.o,\$(filter %.S,\$1))
+endef
+
 EOF
