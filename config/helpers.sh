@@ -29,6 +29,30 @@ sh_nonempty() {
     [ -n "${!var}" ] || panic "Variable '$var' must not be empty"
 }
 
+sh_defined() {
+    local var="$1"
+    [ -n "${!var+x}" ] || panic "Variable '$var' is not defined"
+}
+
+sh_defnonempty() {
+    local var="$1"
+    sh_defined "$var"
+    sh_nonempty "$var"
+}
+
 sh_command() {
     command -v "$1" || panic "Command '$1' not found"
+}
+
+sh_is_part() {
+    local item="$1"
+    shift
+
+    for element in "$@"; do
+        if [ "$element" = "$item" ]; then
+            return 0
+        fi
+    done
+
+    return 1
 }
