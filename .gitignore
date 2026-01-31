@@ -1,8 +1,9 @@
 ## Generated
-config.mk
+toolchain.mk
 compile_commands.json
 build*/
 .cache/
 *.a
 *.o
 jorum
+config.h

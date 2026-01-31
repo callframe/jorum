@@ -1,0 +1,9 @@
+#pragma once
+
+/* clang-format off */
+
+// BOOT
+#define BOOT_STACK (@BOOT_STACK@)
+#define BOOT_STACK_ALIGNMENT (@BOOT_STACK_ALIGNMENT@)
+
+/* clang-format on */

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := all
-include config.mk
+include toolchain.mk
 
 ARCH_DIR := $(WORKING_DIR)/arch
 X86_DIR := $(ARCH_DIR)/x86

@@ -56,3 +56,12 @@ sh_is_part() {
 
     return 1
 }
+
+sh_subst() {
+    local in="$1"
+    local out="$2"
+    shift 2
+
+    "$SED" "$@" "$in" > "$out" \
+        || panic "sed substitution failed"
+}
