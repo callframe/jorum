@@ -60,6 +60,12 @@ sh_defnonempty ECHO
 sh_defnonempty RM
 sh_defined RM_FLAGS
 
+sh_defnonempty SED
+sh_defined SED_FLAGS
+
+sh_defined QEMU
+sh_defined QEMU_FLAGS
+
 print "Using toolchain:"
 print "  CC: $CC"
 print "  LD: $LD"
@@ -67,6 +73,8 @@ print "  AR: $AR"
 print "  MKDIR: $MKDIR"
 print "  ECHO: $ECHO"
 print "  RM: $RM"
+print "  SED: $SED"
+print "  QEMU: $QEMU"
 
 ## Apply global flags
 CC_FLAGS="${CC_FLAGS:+$CC_FLAGS }-ffreestanding -fno-builtin -I$WORKING_DIR"
@@ -79,6 +87,11 @@ sh_subst "$CONFIG_IN" "$CONFIG_OUT" \
     $SED_FLAGS "s|@BOOT_STACK_ALIGNMENT@|$BOOT_STACK_ALIGNMENT|g"
 
 ## Generate Makefile
+
+if sh_nonempty_bool QEMU; then
+    QEMU_MK="QEMU := $QEMU"
+    QEMU_FLAGS_MK="QEMU_FLAGS := $QEMU_FLAGS"
+fi
 
 cat > "$MAKEFILE" << EOF
 # Auto-generated Makefile
@@ -107,6 +120,9 @@ ECHO := $ECHO
 
 RM := $RM
 RM_FLAGS := $RM_FLAGS
+
+${QEMU_MK}
+${QEMU_FLAGS_MK}
 
 ## Methods
 

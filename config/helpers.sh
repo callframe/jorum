@@ -24,14 +24,24 @@ fs_expect_existing() {
     fs_does_exist "$1" || panic "Expected existing file: $1"
 }
 
+sh_nonempty_bool() {
+    local var="$1"
+    [ -n "${!var}" ]
+}
+
 sh_nonempty() {
     local var="$1"
-    [ -n "${!var}" ] || panic "Variable '$var' must not be empty"
+    sh_nonempty_bool "$var" || panic "Variable '$var' must not be empty"
+}
+
+sh_defined_bool() {
+    local var="$1"
+    [ -n "${!var+x}" ]
 }
 
 sh_defined() {
-    local var="$1"
-    [ -n "${!var+x}" ] || panic "Variable '$var' is not defined"
+   local var="$1"
+   sh_defined_bool "$var" || panic "Variable '$var' is not defined"
 }
 
 sh_defnonempty() {

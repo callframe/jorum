@@ -36,6 +36,12 @@ all: $(JORUM)
 $(JORUM): $(JORUM_ARCHIVES)
 	$(call link_objs,$(JORUM_ARCHIVES),$@)
 
+ifneq ($(QEMU),)
+.PHONY: run
+run: $(JORUM)
+	$(QEMU) $(QEMU_FLAGS) -cdrom $<
+endif
+
 .PHONY: clean
 clean: clean_arch
 	$(call remove_at,$(JORUM))
