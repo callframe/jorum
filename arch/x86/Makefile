@@ -7,7 +7,7 @@ include $(X86_BOOT_DIR)/Makefile
 X86_OBJECTS := $(call c2objs,$(X86_SOURCES))
 X86_OBJECTS += $(call asm2objs,$(X86_SOURCES))
 
-$(X86_ARCHIVE): $(X86_OBJECTS)"
+$(X86_ARCHIVE): $(X86_OBJECTS)
 	$(call archive_objs,$(X86_OBJECTS),$@)
 
 .PHONY: clean_arch
