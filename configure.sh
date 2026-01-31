@@ -15,9 +15,6 @@ TAB=$'\t'
 
 HOST_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 
-CC=""
-CC_FLAGS=""
-
 ## Include scripts
 . "$HELPERS_SH" || panic "Could not source helpers.sh"
 
@@ -53,12 +50,16 @@ sh_defined MKDIR_FLAGS
 
 sh_defnonempty ECHO
 
+sh_defnonempty RM
+sh_defined RM_FLAGS
+
 print "Using toolchain:"
 print "  CC: $CC"
 print "  LD: $LD"
 print "  AR: $AR"
 print "  MKDIR: $MKDIR"
 print "  ECHO: $ECHO"
+print "  RM: $RM"
 
 ## Apply global flags
 CC_FLAGS="${CC_FLAGS:+$CC_FLAGS }-ffreestanding -fno-builtin"
@@ -68,6 +69,7 @@ cat > "$MAKEFILE" << EOF
 # Auto-generated Makefile
 
 Q ?= @
+TARGET_ARCH := $TARGET_ARCH
 
 ## Paths
 WORKING_DIR := $WORKING_DIR
@@ -88,23 +90,36 @@ MKDIR_FLAGS := $MKDIR_FLAGS
 
 ECHO := $ECHO
 
+RM := $RM
+RM_FLAGS := $RM_FLAGS
+
 define notice
 ${TAB}\$(Q)\$(ECHO) "${TAB}\$1\$(notdir \$2)"
 endef
 
 define make_dir
-${TAB}\$(call notice,"MKDIR ",\$1)
+${TAB}\$(call notice,MKDIR ,\$1)
 ${TAB}\$(Q)\$(MKDIR) \$(MKDIR_FLAGS) \$1
 endef
 
 define compile_c
-${TAB}\$(Q)\$(ECHO) "${TAB}CC \$1"
+${TAB}\$(call notice,CC ,\$1)
 ${TAB}\$(Q)\$(CC) \$(CC_FLAGS) -c \$1 -o \$2
 endef
 
 define archive_objs
-${TAB}\$(Q)\$(ECHO) "${TAB}AR \$2"
+${TAB}\$(call notice,AR ,\$2)
 ${TAB}\$(Q)\$(AR) \$(AR_FLAGS) \$2 \$1
+endef
+
+define link_objs
+${TAB}\$(call notice,LD ,\$2)
+${TAB}\$(Q)\$(LD) \$(LD_FLAGS) \$1 -o \$2
+endef
+
+define remove_at
+${TAB}\$(call notice,RM ,\$1)
+${TAB}\$(Q)\$(RM) \$(RM_FLAGS) \$1
 endef
 
 EOF
