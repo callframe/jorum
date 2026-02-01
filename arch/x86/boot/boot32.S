@@ -84,6 +84,23 @@ boot_x64:
     hlt
     jmp .
 
+#elif CONFIG_ARCH32
+
+boot_x86:
+    lgdt boot_gdtr
+    ljmp $GDT_KERNEL_CODE_SELECTOR, $x86_enter
+
+x86_enter:
+    mov $GDT_KERNEL_DATA_SELECTOR, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %ax, %ss
+
+    ret
+
+
 #endif
 
 .global _start
@@ -102,6 +119,9 @@ _start:
 #if CONFIG_ARCH64
     call boot_x64_check
     call boot_x64
+
+#elif CONFIG_ARCH32
+    call boot_x86
 #endif
 
     hlt
