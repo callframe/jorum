@@ -16,8 +16,7 @@ stderr() {
 }
 
 panic() {
-    stderr "PANIC: $*"
-    exit 1
+    stderr "PANIC: $*"; exit 1;
 }
 
 unimplemented(){
