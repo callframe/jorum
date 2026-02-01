@@ -52,7 +52,7 @@ ifneq ($(QEMU),)
 .PHONY: run
 run: $(JORUM_ISO)
 	$(call notice,QEMU ,$<)
-	$(Q)$(QEMU) $(QEMU_FLAGS) -cdrom $<
+	$(Q)$(QEMU) $(QEMU_FLAGS) -cdrom $< $(EXTRA)
 	
 endif
 
