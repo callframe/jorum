@@ -9,7 +9,8 @@
 
 # EAX Extended Processor Signature and Feature Bits.
 # https://www.felixcloutier.com/x86/cpuid
-#define CPUID_LEAF 0x80000001
+#define CPUID_LEAF 0x80000000
+#define CPUID_LEAF_1 0x80000001
 
 # Bit 29: Intel® 64 Architecture available if 1.
 # https://www.felixcloutier.com/x86/cpuid
@@ -36,18 +37,28 @@ multiboot_header_end:
 .section .boot, "ax"
 #if CONFIG_ARCH64
 boot_x64_check:
+
     movl $CPUID_LEAF, %eax
     cpuid
 
-    bt $CPUID_X64, %edx
-    jc .Lx64_supported
+    cmpl $CPUID_LEAF_1, %eax
+    jb 2f        
 
+    movl $CPUID_LEAF_1, %eax
+    cpuid
+
+    bt $CPUID_X64, %edx
+    jc 1f          # x64 supported
+
+3: # not x64
     hlt
     jmp .
 
-.Lx64_supported:
-    ret
+2: # cpuid leaf not supported
+    jmp 3b
 
+1: # x64 supported
+    ret
 
 boot_x64:
     ret
