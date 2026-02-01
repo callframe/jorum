@@ -20,7 +20,7 @@ LD_FLAGS += -T$(X86_DIR)/linker.ld
 CC_FLAGS += -m64
 JORUM_ARCHIVES += $(X86_ARCHIVE)
 
-else ifeq ($(TARGET_ARCH),x86)
+else ifeq ($(TARGET_ARCH),i386)
 include $(X86_DIR)/Makefile
 
 LD_FLAGS += -T$(X86_DIR)/linker.ld

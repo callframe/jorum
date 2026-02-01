@@ -3,12 +3,9 @@
 # configure.sh - Jorum build configuration script
 #
 # Detects toolchain, generates config.h and toolchain.mk
-
-set -e
-
 ## Configuration defaults
 SUPPORTED_HOSTS=("linux")
-SUPPORTED_ARCHS=("x86_64")
+SUPPORTED_ARCHS=("x86_64" "i386" "bug-where-not-panic")
 TAB=$'\t'
 
 HOST_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"

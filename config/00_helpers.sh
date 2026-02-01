@@ -54,7 +54,7 @@ sh_defined_bool() {
     [ -n "${!var+x}" ]
 }
 
-sh_defined() {
+sh_defined() { # TODO: doesn't abort even though we call panic idk
    local var="$1"
    sh_defined_bool "$var" || panic "Variable '$var' is not defined"
 }

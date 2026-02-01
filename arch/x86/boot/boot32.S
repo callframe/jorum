@@ -16,7 +16,6 @@
 # Bit 29: Intel® 64 Architecture available if 1.
 # https://www.felixcloutier.com/x86/cpuid
 #define CPUID_X64 29
-.code64
 .section .boot.rodata, "a"
 boot_gdt_start:
 boot_gdt:
