@@ -2,6 +2,9 @@
 
 .code64
 .section .boot, "ax"
+.extern kentry
+
+.global enter_x64
 enter_x64:
     mov $GDT_KERNEL_DATA_SELECTOR, %ax
     mov %ax, %ds
@@ -10,6 +13,8 @@ enter_x64:
     mov %ax, %gs
     mov %ax, %ss
 
+    movabs $kentry, %rax
+    call *%rax
 
     hlt
     jmp .

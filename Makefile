@@ -8,10 +8,14 @@ BOOT_JORUM := $(BOOT_DIR)/jorum.elf
 ARCH_DIR := $(WORKING_DIR)/arch
 X86_DIR := $(ARCH_DIR)/x86
 
+KERNEL_DIR := $(WORKING_DIR)/kernel
+
 INCLUDE_DIR := $(WORKING_DIR)/include
 CC_FLAGS += -I$(INCLUDE_DIR)
 
-JORUM_ARCHIVES :=
+include $(KERNEL_DIR)/Makefile
+
+JORUM_ARCHIVES := 
 
 ifeq ($(TARGET_ARCH),x86_64)
 include $(X86_DIR)/Makefile
@@ -29,6 +33,8 @@ JORUM_ARCHIVES += $(X86_ARCHIVE)
 else
   $(error "Unsupported TARGET_ARCH: $(TARGET_ARCH)")
 endif
+
+JORUM_ARCHIVES += $(KERNEL_ARCHIVE)
 
 JORUM := $(WORKING_DIR)/jorum
 JORUM_ISO := $(WORKING_DIR)/jorum.iso
@@ -60,5 +66,5 @@ run: $(JORUM_ISO)
 endif
 
 .PHONY: clean
-clean: clean_arch
+clean: clean_arch clean_kernel
 	$(call remove_at,$(JORUM))

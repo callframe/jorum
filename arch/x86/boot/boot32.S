@@ -82,15 +82,11 @@ boot_x64_check:
 boot_x64:
     lgdt boot_gdtr
 
+    # far jump 
+    ljmp $GDT_KERNEL_CODE_SELECTOR, $enter_x64
+
     hlt
     jmp .
-
-#elif CONFIG_ARCH32
-
-x86_enter:
-    ret
-
-
 #endif
 
 .global _start
@@ -111,11 +107,13 @@ _start:
     call boot_x64
 
 #elif CONFIG_ARCH32
-    call boot_x86
+    call kentry
 #endif
 
     hlt
     jmp .
+
+
 
 .section .boot.bss, "aw", @nobits
 .balign CONFIG_BOOT_STACK_ALIGNMENT

@@ -11,50 +11,52 @@ P_W = 0x2;
 P_R = 0x4;
 
 PHDRS {
-  text PT_LOAD FLAGS(P_R | P_X);
-  data PT_LOAD FLAGS(P_R | P_W);
+  boot   PT_LOAD FLAGS(P_R | P_X);
+  ktext  PT_LOAD FLAGS(P_R | P_X);
+  kdata  PT_LOAD FLAGS(P_R | P_W);
 }
-
 
 SECTIONS {
     . = BOOTLOADER_BASE;
 
     .multiboot : ALIGN(MB_ALIGNMENT) {
         *(.multiboot)
-    } :text
+    } :boot
 
     .boot : ALIGN(ALIGNMENT) {
         *(.boot*)
-    } :text
+    } :boot
 
     _bootloader_end = .;
+
+    /* ================= kernel higher half ================= */
+
     . = KERNEL_BASE;
 
     kernel_text_load = _bootloader_end;
-    . = ALIGN(ALIGNMENT);
+
     .text : AT(kernel_text_load) {
         *(.text*)
-    } :text
+    } :ktext
 
     kernel_rodata_load = kernel_text_load + SIZEOF(.text);
-    . = ALIGN(ALIGNMENT);
+
     .rodata : AT(kernel_rodata_load) {
         *(.rodata*)
-    } :text
+    } :ktext
 
     kernel_data_load = kernel_rodata_load + SIZEOF(.rodata);
-    . = ALIGN(ALIGNMENT);
+
     .data : AT(kernel_data_load) {
         *(.data*)
-    } :data
+    } :kdata
 
     kernel_bss_load = kernel_data_load + SIZEOF(.data);
 
-    . = ALIGN(ALIGNMENT);
     .bss : AT(kernel_bss_load) {
         *(.bss*)
         *(COMMON)
-    } :data
+    } :kdata
 
     /DISCARD/ : {
         *(.eh_frame*)
