@@ -27,14 +27,15 @@ _start:
     # setup stack
     lea stack_top, %esp
     movl %esp, %ebp
-    
-.halt:
+
     jmp .
 
 .section .boot.bss, "aw", @nobits
-.balign BOOT_STACK_ALIGNMENT
-stack: .space BOOT_STACK
+.balign CONFIG_BOOT_STACK_ALIGNMENT
+stack: .space CONFIG_BOOT_STACK
 stack_top:
 
+.global mb_ptr
 mb_ptr: .long 0
+.global mb_magic
 mb_magic: .long 0

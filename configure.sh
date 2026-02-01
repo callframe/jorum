@@ -15,6 +15,7 @@ CONFIG_OUT="$WORKING_DIR/config.h"
 USE_LLVM=1
 TARGET_ARCH="x86_64"
 SUPPORTED_HOSTS=("linux")
+SUPPORTED_ARCHS=("x86_64")
 TAB=$'\t'
 
 HOST_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -27,6 +28,7 @@ fs_expect_existing "$CONFIG_SH"
 
 ## Toolchain
 sh_is_part "$HOST_OS" "${SUPPORTED_HOSTS[@]}" || panic "Unsupported host OS: $HOST_OS"
+sh_is_part "$TARGET_ARCH" "${SUPPORTED_ARCHS[@]}" || panic "Unsupported target architecture: $TARGET_ARCH"
 
 CLANG_TC_SH="$CONFIG_DIR/clang-tc.sh"
 GCC_TC_SH="$CONFIG_DIR/gcc-tc.sh"
@@ -82,9 +84,19 @@ LD_FLAGS="${LD_FLAGS:+$LD_FLAGS }-nostdlib -no-pie -Wl,--build-id=none"
 
 ## Generate header
 
+ARCH32=0
+ARCH64=1
+
+if [ "$TARGET_ARCH" = "x86_64" ]; then
+    ARCH32=0
+    ARCH64=1
+fi
+
 sh_subst "$CONFIG_IN" "$CONFIG_OUT" \
-    $SED_FLAGS "s|@BOOT_STACK@|$BOOT_STACK|g" \
-    $SED_FLAGS "s|@BOOT_STACK_ALIGNMENT@|$BOOT_STACK_ALIGNMENT|g"
+    $SED_FLAGS "s|@CONFIG_BOOT_STACK@|$BOOT_STACK|g" \
+    $SED_FLAGS "s|@CONFIG_BOOT_STACK_ALIGNMENT@|$BOOT_STACK_ALIGNMENT|g" \
+    $SED_FLAGS "s|@CONFIG_ARCH32@|$ARCH32|g" \
+    $SED_FLAGS "s|@CONFIG_ARCH64@|$ARCH64|g"
 
 ## Generate Makefile
 

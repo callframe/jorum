@@ -2,8 +2,16 @@
 
 /* clang-format off */
 
+// GENERAL
+#define CONFIG_ARCH32 @CONFIG_ARCH32@
+#define CONFIG_ARCH64 @CONFIG_ARCH64@
+
+#if CONFIG_ARCH32 && CONFIG_ARCH64
+#error "Can't build for 32bit and 64bit"
+#endif
+
 // BOOT
-#define BOOT_STACK (@BOOT_STACK@)
-#define BOOT_STACK_ALIGNMENT (@BOOT_STACK_ALIGNMENT@)
+#define CONFIG_BOOT_STACK (@CONFIG_BOOT_STACK@)
+#define CONFIG_BOOT_STACK_ALIGNMENT (@CONFIG_BOOT_STACK_ALIGNMENT@)
 
 /* clang-format on */
