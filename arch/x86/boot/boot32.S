@@ -1,6 +1,5 @@
-.code32
 #include <config.h>
-#include <jorum/arch/x86/multiboot.h>
+#include <jorum/arch/x86/asm_gdt.h>
 
 #define MULTIBOOT_MAGIC 0xE85250D6
 #define MULTIBOOT_ARCH 0x0
@@ -17,8 +16,24 @@
 # Bit 29: Intel® 64 Architecture available if 1.
 # https://www.felixcloutier.com/x86/cpuid
 #define CPUID_X64 29
+.code64
+.section .boot.rodata, "a"
+boot_gdt_start:
+boot_gdt:
+    .quad GDT_NULL_SEGMENT
+    .quad GDT_KERNEL_CODE
+    .quad GDT_KERNEL_DATA
+    .quad GDT_USER_CODE
+    .quad GDT_USER_DATA
+boot_gdt_end:
 
-.section .multiboot
+boot_gdtr:
+    .word boot_gdt_end - boot_gdt - 1  # limit
+    .long boot_gdt                     # base
+
+
+.code32
+.section .multiboot, "a"
 multiboot_header:
     .balign MULTIBOOT_ALIGNMENT
     .long MULTIBOOT_MAGIC          # magic number
@@ -64,6 +79,8 @@ boot_x64_check:
     ret
 
 boot_x64:
+    lgdt boot_gdtr
+
     hlt
     jmp .
 
