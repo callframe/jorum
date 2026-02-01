@@ -11,7 +11,7 @@ X86_DIR := $(ARCH_DIR)/x86
 KERNEL_DIR := $(WORKING_DIR)/kernel
 
 INCLUDE_DIR := $(WORKING_DIR)/include
-CC_FLAGS += -I$(INCLUDE_DIR)
+CC_FLAGS += -I$(INCLUDE_DIR) -g3
 
 include $(KERNEL_DIR)/Makefile
 
@@ -61,8 +61,11 @@ ifneq ($(QEMU),)
 .PHONY: run
 run: $(JORUM_ISO)
 	$(call notice,QEMU ,$<)
-	$(Q)$(QEMU) $(QEMU_FLAGS) -cdrom $< $(EXTRA)
+	$(Q)$(QEMU) $(QEMU_FLAGS) -cdrom $<
 	
+debug: $(JORUM_ISO)
+	$(call notice,QEMU Debug,$<)
+	$(Q)$(QEMU) -s -S $(QEMU_FLAGS) -cdrom $<
 endif
 
 .PHONY: clean
