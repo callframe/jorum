@@ -162,6 +162,6 @@ boot_pdpt:
 
 .balign PGG_PAGE_SIZE
 boot_pd:
-    .quad _kernel_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PAGE_SIZE)
+    .quad _kernel_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PS)
 
 #endif
