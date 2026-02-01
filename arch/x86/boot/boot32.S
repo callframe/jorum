@@ -35,7 +35,7 @@ multiboot_header_end:
 
 .section .boot, "ax"
 #if CONFIG_ARCH64
-boot_check_x64:
+boot_x64_check:
     movl $CPUID_LEAF, %eax
     cpuid
 
@@ -68,7 +68,7 @@ _start:
     movl %esp, %ebp
 
 #if CONFIG_ARCH64
-    call boot_check_x64
+    call boot_x64_check
     call boot_x64
 #endif
 
