@@ -16,14 +16,14 @@ JORUM_ARCHIVES :=
 ifeq ($(TARGET_ARCH),x86_64)
 include $(X86_DIR)/Makefile
 
-LD_FLAGS += -T$(X86_DIR)/linker.ld
+LD_FLAGS += -T$(X86_DIR)/linker.ld -m64
 CC_FLAGS += -m64
 JORUM_ARCHIVES += $(X86_ARCHIVE)
 
 else ifeq ($(TARGET_ARCH),i386)
 include $(X86_DIR)/Makefile
 
-LD_FLAGS += -T$(X86_DIR)/linker.ld
+LD_FLAGS += -T$(X86_DIR)/linker.ld -m32
 CC_FLAGS += -m32
 JORUM_ARCHIVES += $(X86_ARCHIVE)
 else

@@ -5,7 +5,7 @@
 # Detects toolchain, generates config.h and toolchain.mk
 ## Configuration defaults
 SUPPORTED_HOSTS=("linux")
-SUPPORTED_ARCHS=("x86_64" "i386" "bug-where-not-panic")
+SUPPORTED_ARCHS=("x86_64" "i386")
 TAB=$'\t'
 
 HOST_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"

@@ -16,20 +16,6 @@
 # Bit 29: Intel® 64 Architecture available if 1.
 # https://www.felixcloutier.com/x86/cpuid
 #define CPUID_X64 29
-.section .boot.rodata, "a"
-boot_gdt_start:
-boot_gdt:
-    .quad GDT_NULL_SEGMENT
-    .quad GDT_KERNEL_CODE
-    .quad GDT_KERNEL_DATA
-    .quad GDT_USER_CODE
-    .quad GDT_USER_DATA
-boot_gdt_end:
-
-boot_gdtr:
-    .word boot_gdt_end - boot_gdt - 1  # limit
-    .long boot_gdt                     # base
-
 
 .code32
 .section .multiboot, "a"
@@ -48,6 +34,22 @@ multiboot_header:
     .long MULTIBOOT_END_TAG_SIZE      # end tag size
 multiboot_header_end:
 
+#if CONFIG_ARCH64
+.section .boot.rodata, "a"
+boot_gdt_start:
+boot_gdt:
+    .quad GDT_NULL_SEGMENT
+    .quad GDT_KERNEL_CODE
+    .quad GDT_KERNEL_DATA
+    .quad GDT_USER_CODE
+    .quad GDT_USER_DATA
+boot_gdt_end:
+
+boot_gdtr:
+    .word boot_gdt_end - boot_gdt - 1  # limit
+    .long boot_gdt                     # base
+
+#endif
 
 .section .boot, "ax"
 .extern enter_x64
@@ -85,18 +87,7 @@ boot_x64:
 
 #elif CONFIG_ARCH32
 
-boot_x86:
-    lgdt boot_gdtr
-    ljmp $GDT_KERNEL_CODE_SELECTOR, $x86_enter
-
 x86_enter:
-    mov $GDT_KERNEL_DATA_SELECTOR, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-    mov %ax, %ss
-
     ret
 
 
