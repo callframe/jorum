@@ -98,6 +98,7 @@ boot_x64:
     movl %eax, %cr3
 
     # enable long mode
+    movl $MSR_EFER, %ecx
     rdmsr
     orl $EFER_LME, %eax
     wrmsr
@@ -152,10 +153,10 @@ mb_magic: .long 0
 .extern _kernel_end
 
 boot_pml4:
-    .quad bot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
+    .quad boot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
 
-bot_pdpt:
-    .quad bot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
+boot_pdpt:
+    .quad boot_pd + (PGG_PRESENT | PGG_WRITABLE)
 
 boot_pd:
     .quad _kernel_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PAGE_SIZE)
