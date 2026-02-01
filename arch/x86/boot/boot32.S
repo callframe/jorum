@@ -152,12 +152,15 @@ mb_magic: .long 0
 .extern _kernel_start
 .extern _kernel_end
 
+.balign PGG_PAGE_SIZE
 boot_pml4:
     .quad boot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
 
+.balign PGG_PAGE_SIZE
 boot_pdpt:
     .quad boot_pd + (PGG_PRESENT | PGG_WRITABLE)
 
+.balign PGG_PAGE_SIZE
 boot_pd:
     .quad _kernel_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PAGE_SIZE)
 
