@@ -1,4 +1,6 @@
-#include "config.h"
+.code32
+#include <config.h>
+#include <jorum/arch/x86/multiboot.h>
 
 #define MULTIBOOT_MAGIC 0xE85250D6
 #define MULTIBOOT_ARCH 0x0
@@ -16,7 +18,6 @@
 # https://www.felixcloutier.com/x86/cpuid
 #define CPUID_X64 29
 
-.code32
 .section .multiboot
 multiboot_header:
     .balign MULTIBOOT_ALIGNMENT
@@ -35,6 +36,8 @@ multiboot_header_end:
 
 
 .section .boot, "ax"
+.extern enter_x64
+
 #if CONFIG_ARCH64
 boot_x64_check:
 
@@ -61,7 +64,8 @@ boot_x64_check:
     ret
 
 boot_x64:
-    ret
+    hlt
+    jmp .
 
 #endif
 

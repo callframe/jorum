@@ -3,10 +3,13 @@ include toolchain.mk
 
 ISO_DIR := $(WORKING_DIR)/iso
 BOOT_DIR := $(ISO_DIR)/boot
-BOOT_JORUM := $(BOOT_DIR)/jorum
+BOOT_JORUM := $(BOOT_DIR)/jorum.elf
 
 ARCH_DIR := $(WORKING_DIR)/arch
 X86_DIR := $(ARCH_DIR)/x86
+
+INCLUDE_DIR := $(WORKING_DIR)/include
+CC_FLAGS += -I$(INCLUDE_DIR)
 
 JORUM_ARCHIVES :=
 

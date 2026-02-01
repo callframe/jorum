@@ -7,16 +7,17 @@ config.h
 /build-*/
 /build_*/
 /build*/
-/.cache/
+.cache/
 
 ### Object / archive files
 *.o
 *.a
 *.lo
 *.d
+*.elf
 
 ### Binaries
-**/jorum
+/jorum
 
 ### ISO / disk images
 *.iso
