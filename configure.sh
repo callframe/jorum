@@ -1,49 +1,40 @@
 #!/usr/bin/env bash
+#
+# configure.sh - Jorum build configuration script
+#
+# Detects toolchain, generates config.h and toolchain.mk
 
-## Constants and paths
-WORKING_DIR=$(pwd)
-CONFIG_DIR="$WORKING_DIR/config"
-BUILD_DIR="$WORKING_DIR/build"
+set -e
 
-HELPERS_SH="$CONFIG_DIR/helpers.sh"
-MAKEFILE="$WORKING_DIR/toolchain.mk"
-
-CONFIG_SH="$WORKING_DIR/config.sh"
-CONFIG_IN="$CONFIG_DIR/config.in"
-CONFIG_OUT="$WORKING_DIR/config.h"
-
-USE_LLVM=1
-TARGET_ARCH="x86_64"
+## Configuration defaults
 SUPPORTED_HOSTS=("linux")
 SUPPORTED_ARCHS=("x86_64")
 TAB=$'\t'
 
 HOST_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 
-## Include scripts
-. "$HELPERS_SH" || panic "Could not source helpers.sh"
+## Load core utilities and paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="$SCRIPT_DIR/config"
 
-fs_expect_existing "$CONFIG_SH"
-. "$CONFIG_SH"
+. "$CONFIG_DIR/00_helpers.sh" || { echo "PANIC: Could not source 00_helpers.sh" >&2; exit 1; }
+sh_source "$CONFIG_DIR/00_paths.sh"
 
-## Toolchain
+## Load user configuration
+sh_source "$JORUM_CONFIG_SH"
+
+## Validate environment
 sh_is_part "$HOST_OS" "${SUPPORTED_HOSTS[@]}" || panic "Unsupported host OS: $HOST_OS"
 sh_is_part "$TARGET_ARCH" "${SUPPORTED_ARCHS[@]}" || panic "Unsupported target architecture: $TARGET_ARCH"
 
-CLANG_TC_SH="$CONFIG_DIR/clang-tc.sh"
-GCC_TC_SH="$CONFIG_DIR/gcc-tc.sh"
-GENERAL_TC_SH="$CONFIG_DIR/general-tc.sh"
-
+## Load toolchain configuration
 if [ "$USE_LLVM" -eq 1 ]; then
-    fs_expect_existing "$CLANG_TC_SH"
-    . "$CLANG_TC_SH"
+    sh_source "$JORUM_TOOLCHAIN_CLANG"
 else
-    fs_expect_existing "$GCC_TC_SH"
-    . "$GCC_TC_SH"
+    sh_source "$JORUM_TOOLCHAIN_GCC"
 fi
 
-fs_expect_existing "$GENERAL_TC_SH"
-. "$GENERAL_TC_SH"
+sh_source "$JORUM_PLATFORM_SH"
 
 sh_defnonempty CC
 sh_defined CC_FLAGS
@@ -79,7 +70,7 @@ print "  SED: $SED"
 print "  QEMU: $QEMU"
 
 ## Apply global flags
-CC_FLAGS="${CC_FLAGS:+$CC_FLAGS }-ffreestanding -fno-builtin -I$WORKING_DIR"
+CC_FLAGS="${CC_FLAGS:+$CC_FLAGS }-ffreestanding -fno-builtin -I$JORUM_ROOT"
 LD_FLAGS="${LD_FLAGS:+$LD_FLAGS }-nostdlib -no-pie -Wl,--build-id=none"
 
 ## Generate header
@@ -92,7 +83,7 @@ if [ "$TARGET_ARCH" = "x86_64" ]; then
     ARCH64=1
 fi
 
-sh_subst "$CONFIG_IN" "$CONFIG_OUT" \
+sh_subst "$JORUM_CONFIG_IN" "$JORUM_CONFIG_H" \
     $SED_FLAGS "s|@CONFIG_BOOT_STACK@|$BOOT_STACK|g" \
     $SED_FLAGS "s|@CONFIG_BOOT_STACK_ALIGNMENT@|$BOOT_STACK_ALIGNMENT|g" \
     $SED_FLAGS "s|@CONFIG_ARCH32@|$ARCH32|g" \
@@ -105,15 +96,16 @@ if sh_nonempty_bool QEMU; then
     QEMU_FLAGS_MK="QEMU_FLAGS := $QEMU_FLAGS"
 fi
 
-cat > "$MAKEFILE" << EOF
-# Auto-generated Makefile
+cat > "$JORUM_TOOLCHAIN_MK" << EOF
+# Auto-generated Makefile by configure.sh
+# DO NOT EDIT - Changes will be overwritten
 
 Q ?= @
 TARGET_ARCH := $TARGET_ARCH
 
 ## Paths
-WORKING_DIR := $WORKING_DIR
-BUILD_DIR := $BUILD_DIR
+WORKING_DIR := $JORUM_ROOT
+BUILD_DIR := $JORUM_BUILD_DIR
 
 ## Toolchain
 CC := $CC

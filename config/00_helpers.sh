@@ -1,3 +1,12 @@
+#!/usr/bin/env bash
+#
+# config/00_helpers.sh
+#
+# PURPOSE: Core shell utility functions for configure system
+# REQUIRES: (none - load first)
+# PROVIDES: print, panic, sh_*, fs_* functions
+# SIDE EFFECTS: Functions like panic() will exit the script
+
 print() {
     echo "$*"
 }
@@ -22,6 +31,12 @@ fs_does_exist(){
 
 fs_expect_existing() {
     fs_does_exist "$1" || panic "Expected existing file: $1"
+}
+
+sh_source() {
+    local file="$1"
+    # shellcheck disable=SC1090
+    . "$file" || panic "Failed to source: $file"
 }
 
 sh_nonempty_bool() {
