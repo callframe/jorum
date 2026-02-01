@@ -18,6 +18,7 @@ PHDRS {
 
 SECTIONS {
     . = BOOTLOADER_BASE;
+    _kernel_start = .;
 
     .multiboot : ALIGN(MB_ALIGNMENT) {
         *(.multiboot)
@@ -33,30 +34,33 @@ SECTIONS {
 
     . = KERNEL_BASE;
 
-    kernel_text_load = _bootloader_end;
+    _kernel_text_load = _bootloader_end;
 
-    .text : AT(kernel_text_load) {
+    .text : AT(_kernel_text_load) {
         *(.text*)
     } :ktext
 
-    kernel_rodata_load = kernel_text_load + SIZEOF(.text);
+    _kernel_rodata_load = _kernel_text_load + SIZEOF(.text);
 
-    .rodata : AT(kernel_rodata_load) {
+    .rodata : AT(_kernel_rodata_load) {
         *(.rodata*)
     } :ktext
 
-    kernel_data_load = kernel_rodata_load + SIZEOF(.rodata);
+    _kernel_data_load = _kernel_rodata_load + SIZEOF(.rodata);
 
-    .data : AT(kernel_data_load) {
+    .data : AT(_kernel_data_load) {
         *(.data*)
     } :kdata
 
-    kernel_bss_load = kernel_data_load + SIZEOF(.data);
+    _kernel_bss_load = _kernel_data_load + SIZEOF(.data);
 
-    .bss : AT(kernel_bss_load) {
+    .bss : AT(_kernel_bss_load) {
         *(.bss*)
         *(COMMON)
     } :kdata
+
+    _kernel_end = .;
+    _kernel_size = _kernel_end - _kernel_start;
 
     /DISCARD/ : {
         *(.eh_frame*)

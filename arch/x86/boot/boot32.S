@@ -1,7 +1,11 @@
 #include <config.h>
 #include <jorum/arch/x86/asm_gdt.h>
+#include <jorum/arch/x86/asm_paging.h>
+#include <jorum/arch/x86/asm_processor.h>
 
-#define MULTIBOOT_MAGIC 0xE85250D6
+#define ASM_FILE
+#include <jorum/multiboot.h>
+
 #define MULTIBOOT_ARCH 0x0
 #define MULTIBOOT_ALIGNMENT 8
 
@@ -21,12 +25,13 @@
 .section .multiboot, "a"
 multiboot_header:
     .balign MULTIBOOT_ALIGNMENT
-    .long MULTIBOOT_MAGIC          # magic number
+    .long MULTIBOOT2_HEADER_MAGIC          # magic number
     .long MULTIBOOT_ARCH           # architecture
     .long multiboot_header_end - multiboot_header  # header length
 
     #define MULTIBOOT_LEN (multiboot_header_end - multiboot_header)
-    #define MULTIBOOT_CHECKSUM (-(MULTIBOOT_MAGIC + MULTIBOOT_ARCH + MULTIBOOT_LEN))
+    #define MULTIBOOT_PRE_CHECKSUM (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCH + MULTIBOOT_LEN)
+    #define MULTIBOOT_CHECKSUM (-MULTIBOOT_PRE_CHECKSUM)
     .long MULTIBOOT_CHECKSUM     # checksum
 
     .balign MULTIBOOT_ALIGNMENT
@@ -80,13 +85,30 @@ boot_x64_check:
     ret
 
 boot_x64:
+    # load GDT
     lgdt boot_gdtr
+
+    # enable PAE
+    movl %cr4, %eax
+    orl $CR4_PAE, %eax
+    movl %eax, %cr4
+
+    # load PML4
+    lea boot_pml4, %eax
+    movl %eax, %cr3
+
+    # enable long mode
+    rdmsr
+    orl $EFER_LME, %eax
+    wrmsr
+
+    # enable paging
+    movl %cr0, %eax
+    orl $CR0_PG, %eax
+    movl %eax, %cr0
 
     # far jump 
     ljmp $GDT_KERNEL_CODE_SELECTOR, $enter_x64
-
-    hlt
-    jmp .
 #endif
 
 .global _start
@@ -113,8 +135,6 @@ _start:
     hlt
     jmp .
 
-
-
 .section .boot.bss, "aw", @nobits
 .balign CONFIG_BOOT_STACK_ALIGNMENT
 stack: .space CONFIG_BOOT_STACK
@@ -124,3 +144,20 @@ stack_top:
 mb_ptr: .long 0
 .global mb_magic
 mb_magic: .long 0
+
+#if CONFIG_ARCH64
+.section .boot.paging, "ax"
+
+.extern _kernel_start
+.extern _kernel_end
+
+boot_pml4:
+    .quad bot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
+
+bot_pdpt:
+    .quad bot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
+
+boot_pd:
+    .quad _kernel_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PAGE_SIZE)
+
+#endif
