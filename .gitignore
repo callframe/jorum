@@ -1,9 +1,32 @@
-## Generated
+### Toolchain / configure output
 toolchain.mk
-compile_commands.json
-build*/
-.cache/
-*.a
-*.o
-jorum
 config.h
+
+### Build artifacts
+/build/
+/build-*/
+/build_*/
+/build*/
+/.cache/
+
+### Object / archive files
+*.o
+*.a
+*.lo
+*.d
+
+### Binaries
+**/jorum
+
+### ISO / disk images
+*.iso
+*.img
+
+### Tooling
+compile_commands.json
+
+### Editor / misc junk
+*~
+*.swp
+*.swo
+.DS_Store

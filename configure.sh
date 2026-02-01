@@ -59,6 +59,10 @@ sh_defined SED_FLAGS
 sh_defined QEMU
 sh_defined QEMU_FLAGS
 
+sh_defnonempty GRUB
+
+sh_defnonempty COPY
+
 print "Using toolchain:"
 print "  CC: $CC"
 print "  LD: $LD"
@@ -68,6 +72,8 @@ print "  ECHO: $ECHO"
 print "  RM: $RM"
 print "  SED: $SED"
 print "  QEMU: $QEMU"
+print "  GRUB: $GRUB"
+print "  COPY: $COPY"
 
 ## Apply global flags
 CC_FLAGS="${CC_FLAGS:+$CC_FLAGS }-ffreestanding -fno-builtin -I$JORUM_ROOT"
@@ -128,6 +134,10 @@ RM_FLAGS := $RM_FLAGS
 ${QEMU_MK}
 ${QEMU_FLAGS_MK}
 
+COPY := $COPY
+
+GRUB := $GRUB
+
 ## Methods
 
 define notice
@@ -165,6 +175,11 @@ endef
 
 define asm2objs
 ${TAB}\$(patsubst %.S,%.o,\$(filter %.S,\$1))
+endef
+
+define copy_file
+${TAB}\$(call notice,COPY ,\$2)
+${TAB}\$(Q)\$(COPY) \$1 \$2
 endef
 
 EOF

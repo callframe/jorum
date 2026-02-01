@@ -1,6 +1,10 @@
 .DEFAULT_GOAL := all
 include toolchain.mk
 
+ISO_DIR := $(WORKING_DIR)/iso
+BOOT_DIR := $(ISO_DIR)/boot
+BOOT_JORUM := $(BOOT_DIR)/jorum
+
 ARCH_DIR := $(WORKING_DIR)/arch
 X86_DIR := $(ARCH_DIR)/x86
 
@@ -24,8 +28,9 @@ else
 endif
 
 JORUM := $(WORKING_DIR)/jorum
+JORUM_ISO := $(WORKING_DIR)/jorum.iso
 
-all: $(JORUM)
+all: $(JORUM) $(JORUM_ISO)
 
 %.o: %.S
 	$(call compile_c,$<,$@)
@@ -36,10 +41,19 @@ all: $(JORUM)
 $(JORUM): $(JORUM_ARCHIVES)
 	$(call link_objs,$(JORUM_ARCHIVES),$@)
 
+$(BOOT_JORUM): $(JORUM)
+	$(call copy_file,$<,$@)
+
+$(JORUM_ISO): $(JORUM) $(BOOT_JORUM)
+	$(call notice,GRUB ,$@)
+	$(Q)$(GRUB) -o $@ $(ISO_DIR)
+
 ifneq ($(QEMU),)
 .PHONY: run
-run: $(JORUM)
-	$(QEMU) $(QEMU_FLAGS) -cdrom $<
+run: $(JORUM_ISO)
+	$(call notice,QEMU ,$<)
+	$(Q)$(QEMU) $(QEMU_FLAGS) -cdrom $<
+	
 endif
 
 .PHONY: clean

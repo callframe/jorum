@@ -12,7 +12,6 @@ JORUM_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Source directories
 JORUM_CONFIG_DIR="$JORUM_ROOT/config"
-JORUM_ARCH_DIR="$JORUM_ROOT/arch"
 
 # Build artifacts
 JORUM_BUILD_DIR="$JORUM_ROOT/build"

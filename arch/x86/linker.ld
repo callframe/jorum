@@ -2,6 +2,8 @@ ENTRY(_start)
 
 BOOTLOADER_BASE = 1M;
 KERNEL_BASE = 0xffff800000000000;
+
+MB_ALIGNMENT = 8;
 ALIGNMENT = 0x1000;
 
 P_X = 0x1;
@@ -17,7 +19,7 @@ PHDRS {
 SECTIONS {
     . = BOOTLOADER_BASE;
 
-    .multiboot : ALIGN(ALIGNMENT) {
+    .multiboot : ALIGN(MB_ALIGNMENT) {
         *(.multiboot)
     } :text
 

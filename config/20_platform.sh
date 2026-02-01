@@ -20,3 +20,7 @@ SED_FLAGS="-e"
 
 QEMU="$(sh_command qemu-system-$TARGET_ARCH)"
 QEMU_FLAGS="-M q35 -m 512M -no-reboot -no-shutdown -boot d -d int,cpu_reset"
+
+COPY="$(sh_command cp)"
+
+GRUB="$(sh_command grub-mkrescue)"

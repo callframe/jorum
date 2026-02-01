@@ -2,6 +2,10 @@
 
 #define MULTIBOOT_MAGIC 0xE85250D6
 #define MULTIBOOT_ARCH 0x0
+#define MULTIBOOT_ALIGNMENT 8
+
+#define MULTIBOOT_END_TAG_TYPE 0
+#define MULTIBOOT_END_TAG_SIZE 8
 
 # EAX Extended Processor Signature and Feature Bits.
 # https://www.felixcloutier.com/x86/cpuid
@@ -14,11 +18,18 @@
 .code32
 .section .multiboot
 multiboot_header:
-    .balign 4
+    .balign MULTIBOOT_ALIGNMENT
     .long MULTIBOOT_MAGIC          # magic number
     .long MULTIBOOT_ARCH           # architecture
     .long multiboot_header_end - multiboot_header  # header length
-    .long 0                        # checksum
+
+    #define MULTIBOOT_LEN (multiboot_header_end - multiboot_header)
+    #define MULTIBOOT_CHECKSUM (-(MULTIBOOT_MAGIC + MULTIBOOT_ARCH + MULTIBOOT_LEN))
+    .long MULTIBOOT_CHECKSUM     # checksum
+
+    .balign MULTIBOOT_ALIGNMENT
+    .long MULTIBOOT_END_TAG_TYPE      # end tag type
+    .long MULTIBOOT_END_TAG_SIZE      # end tag size
 multiboot_header_end:
 
 
