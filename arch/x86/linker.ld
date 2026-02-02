@@ -17,8 +17,8 @@ PHDRS {
 }
 
 SECTIONS {
-    . = BOOTLOADER_BASE;
     _kernel_start = .;
+    . = BOOTLOADER_BASE;
 
     .multiboot : ALIGN(MB_ALIGNMENT) {
         *(.multiboot)
