@@ -13,10 +13,8 @@ enter_x64:
     mov %ax, %gs
     mov %ax, %ss
 
-# Temporarily disabled due to identity mapping missing.
-# Debug earlier crash FIRST!!!
-#    movabs $kentry, %rax
-#    call *%rax
+    movabs $kentry, %rax
+    call *%rax
 
     hlt
     jmp .

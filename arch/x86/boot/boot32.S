@@ -108,8 +108,9 @@ boot_x64:
     orl $CR0_PG, %eax
     movl %eax, %cr0
 
-    # far jump 
-    ljmp $GDT_KERNEL_CODE_SELECTOR, $enter_x64
+    pushl $GDT_KERNEL_CODE_SELECTOR
+    pushl $enter_x64
+    lret
 #endif
 
 .global _start
