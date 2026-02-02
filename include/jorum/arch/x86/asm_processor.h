@@ -116,6 +116,15 @@
 #define CR4_CET CR_BIT(23)
 
 /*
+ * MSR's
+ * Model-Specific Registers selectors
+ * https://en.wikipedia.org/wiki/Control_register
+ * 0xC0000080: EFER
+ */
+
+#define MSR_EFER 0xC0000080
+
+/*
  * EFER:
  * Extended Feature Enable Register
  * 63-32: Reserved
@@ -150,15 +159,6 @@
 #define EFER_WBINVD CR_BIT(18)
 #define EFER_UAI CR_BIT(20)
 #define EFER_AIBRS CR_BIT(21)
-
-/*
- * MSR's
- * Model-Specific Registers selectors
- * https://en.wikipedia.org/wiki/Control_register
- * 0xC0000080: EFER
- */
-
-#define MSR_EFER 0xC0000080
 
 /*
  * CPUID
