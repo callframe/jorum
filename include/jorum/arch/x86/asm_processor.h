@@ -4,11 +4,14 @@
 // Volume 2 Chapter 3.1 - System-Control Registers
 // 2026-02-01: Found at page 495
 
+// https://docs.amd.com/v/u/en-US/40332-PUB_4.08
+// 2026-02-02: Appendix D.2 page 1874
+
 /*
  * CR0:
  * Used to control operating mode and states of the processor.
  * Unconditional:
- * 
+ *
  * 63-32 Reserved
  * 31: Paging enable R/W
  * 30: Cache disable R/W
@@ -26,7 +29,7 @@
  * 2: Emulate Coprocessor R/W
  * 1: Monitor Coprocessor R/W
  * 0: Protection Enable R/W
-*/
+ */
 
 #define CR_BIT(bit) (1UL << (bit))
 #define CR0_PE CR_BIT(0)
@@ -44,7 +47,7 @@
  * CR2:
  * Used to represent the address that caused a page fault.
  * 63-0: Page-fault linear address
-*/
+ */
 
 /*
  * CR3 Legacy-Mode PAE:
@@ -93,7 +96,7 @@
  * 2: Time Stamp Disable R/W
  * 1: Protected Mode Virtual Interrupts R/W
  * 0: Virtual-8086 Mode Extensions R/W
-*/
+ */
 
 #define CR4_VME CR_BIT(0)
 #define CR4_PVI CR_BIT(1)
@@ -114,7 +117,7 @@
 #define CR4_SMAP CR_BIT(21)
 #define CR4_PKE CR_BIT(22)
 #define CR4_CET CR_BIT(23)
-    
+
 /*
  * EFER:
  * Extended Feature Enable Register
@@ -136,7 +139,7 @@
  * 8: Long Mode Enable R/W
  * 7-1: Reserved
  * 0: System Call Extensions Enable R/W
-*/
+ */
 
 #define EFER_SCE CR_BIT(0)
 #define EFER_LME CR_BIT(8)
@@ -156,6 +159,24 @@
  * Model-Specific Registers selectors
  * https://en.wikipedia.org/wiki/Control_register
  * 0xC0000080: EFER
-*/
+ */
 
 #define MSR_EFER 0xC0000080
+
+/*
+ * CPUID
+ * Standard: 0000_0001h,
+ * Extended: 8000_0001h
+ * Structured Extended: 8000_0007h
+ */
+
+#define CPUID_FUNCTION_STANDARD 0x00000001
+#define CPUID_FUNCTION_EXTENDED 0x80000001
+#define CPUID_FUNCTION_STRUCTURED_EXTENDED 0x80000007
+
+/*
+ * CPUID Extended EDX
+ * Bit 29: Long Mode
+ */
+
+#define CPUID_FUNCTION_EXTENDED_LM 29

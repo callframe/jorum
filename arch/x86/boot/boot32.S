@@ -4,15 +4,6 @@
 #include <jorum/arch/x86/asm_processor.h>
 #include <jorum/arch/x86/asm_multiboot.h>
 
-# EAX Extended Processor Signature and Feature Bits.
-# https://www.felixcloutier.com/x86/cpuid
-#define CPUID_LEAF 0x80000000
-#define CPUID_LEAF_1 0x80000001
-
-# Bit 29: Intel® 64 Architecture available if 1.
-# https://www.felixcloutier.com/x86/cpuid
-#define CPUID_X64 29
-
 .code32
 .section .multiboot, "a"
 multiboot_header:
@@ -54,16 +45,16 @@ boot_gdtr:
 #if CONFIG_ARCH64
 boot_x64_check:
 
-    movl $CPUID_LEAF, %eax
+    movl $0x0, %eax
     cpuid
 
-    cmpl $CPUID_LEAF_1, %eax
+    cmpl $CPUID_FUNCTION_EXTENDED, %eax
     jb 2f        
 
-    movl $CPUID_LEAF_1, %eax
+    movl $CPUID_FUNCTION_EXTENDED, %eax
     cpuid
 
-    bt $CPUID_X64, %edx
+    bt $CPUID_FUNCTION_EXTENDED_LM, %edx
     jc 1f          # x64 supported
 
 3: # not x64
