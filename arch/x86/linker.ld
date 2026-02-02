@@ -28,21 +28,17 @@ SECTIONS {
         *(.boot*)
     } :boot
 
-    . = ALIGN(2M);
     _bootloader_end = .;
 
     /* ================= kernel higher half ================= */
-
+    _kernel_start = ALIGN(_bootloader_end, 2M);
     . = KERNEL_BASE;
-    _kernel_start = .;
 
-    _kernel_text_load = _bootloader_end;
-
-    .text : AT(_kernel_text_load) {
+    .text : AT(_kernel_start) {
         *(.text*)
     } :ktext
 
-    _kernel_rodata_load = _kernel_text_load + SIZEOF(.text);
+    _kernel_rodata_load = _kernel_start + SIZEOF(.text);
 
     .rodata : AT(_kernel_rodata_load) {
         *(.rodata*)
@@ -60,8 +56,6 @@ SECTIONS {
         *(.bss*)
         *(COMMON)
     } :kdata
-
-    _kernel_end = .;
 
     /DISCARD/ : {
         *(.eh_frame*)
