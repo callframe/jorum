@@ -1,6 +1,6 @@
 ENTRY(_start)
 
-BOOTLOADER_BASE = 1M;
+BOOTLOADER_BASE = 2M;
 KERNEL_BASE = 0xffff800000000000;
 
 MB_ALIGNMENT = 8;
@@ -17,8 +17,8 @@ PHDRS {
 }
 
 SECTIONS {
-    _kernel_start = .;
     . = BOOTLOADER_BASE;
+    _bootloader_start = .;
 
     .multiboot : ALIGN(MB_ALIGNMENT) {
         *(.multiboot)
@@ -28,11 +28,13 @@ SECTIONS {
         *(.boot*)
     } :boot
 
+    . = ALIGN(2M);
     _bootloader_end = .;
 
     /* ================= kernel higher half ================= */
 
     . = KERNEL_BASE;
+    _kernel_start = .;
 
     _kernel_text_load = _bootloader_end;
 
@@ -60,7 +62,6 @@ SECTIONS {
     } :kdata
 
     _kernel_end = .;
-    _kernel_size = _kernel_end - _kernel_start;
 
     /DISCARD/ : {
         *(.eh_frame*)

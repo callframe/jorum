@@ -155,14 +155,27 @@ mb_magic: .long 0
 
 .balign PGG_PAGE_SIZE
 boot_pml4:
-    .quad boot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
+    .quad boot_pdpt_identity + (PGG_PRESENT | PGG_WRITABLE)
+    .rept 255
+    .quad 0
+    .endr
+    .quad boot_pdpt_kernel + (PGG_PRESENT | PGG_WRITABLE)
 
 .balign PGG_PAGE_SIZE
-boot_pdpt:
-    .quad boot_pd + (PGG_PRESENT | PGG_WRITABLE)
+boot_pdpt_identity:
+    .quad boot_pd_identity + (PGG_PRESENT | PGG_WRITABLE)
 
 .balign PGG_PAGE_SIZE
-boot_pd:
-    .quad _kernel_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PS)
+boot_pd_identity:
+    .quad 0x0 + (PGG_PRESENT | PGG_WRITABLE | PGG_PS)
+    .quad _bootloader_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PS)
+
+.balign PGG_PAGE_SIZE
+boot_pdpt_kernel:
+    .quad boot_pd_kernel + (PGG_PRESENT | PGG_WRITABLE)
+
+.balign PGG_PAGE_SIZE
+boot_pd_kernel:
+    .quad _kernel_text_load + (PGG_PRESENT | PGG_WRITABLE | PGG_PS)
 
 #endif
