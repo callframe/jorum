@@ -90,7 +90,8 @@ sh_subst "$JORUM_CONFIG_IN" "$JORUM_CONFIG_H" \
     $SED_FLAGS "s|@CONFIG_BOOT_STACK@|$BOOT_STACK|g" \
     $SED_FLAGS "s|@CONFIG_BOOT_STACK_ALIGNMENT@|$BOOT_STACK_ALIGNMENT|g" \
     $SED_FLAGS "s|@CONFIG_ARCH32@|$ARCH32|g" \
-    $SED_FLAGS "s|@CONFIG_ARCH64@|$ARCH64|g"
+    $SED_FLAGS "s|@CONFIG_ARCH64@|$ARCH64|g" \
+    $SED_FLAGS "s|@CONFIG_KERNEL_BASE@|$KERNEL_BASE|g"
 
 ## Generate Makefile
 
@@ -149,6 +150,11 @@ endef
 define compile_c
 ${TAB}\$(call notice,CC ,\$1)
 ${TAB}\$(Q)\$(CC) \$(CC_FLAGS) -c \$1 -o \$2
+endef
+
+define preprocess_file
+${TAB}\$(call notice,PP ,\$2)
+${TAB}\$(Q)\$(CC) -E -x assembler-with-cpp \$(CC_FLAGS) \$1 -o \$2
 endef
 
 define archive_objs

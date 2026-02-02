@@ -2,6 +2,8 @@
 
 // https://wiki.osdev.org/Paging
 
+#include <jorum/arch/x86/asm_pagingl.h>
+
 #define PGG_MASK(bit) (1UL << (bit))
 
 #define PGG_PRESENT PGG_MASK(0)

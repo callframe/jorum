@@ -15,6 +15,7 @@ config.h
 *.lo
 *.d
 *.elf
+**/linker.ld
 
 ### Binaries
 /jorum

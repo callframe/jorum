@@ -155,9 +155,7 @@ mb_magic: .long 0
 .balign PGG_PAGE_SIZE
 boot_pml4:
     .quad boot_pdpt + (PGG_PRESENT | PGG_WRITABLE)
-    .rept 255
-    .quad 0
-    .endr
+    . = boot_pml4 + (PGG_PML4_INDEX(CONFIG_KERNEL_BASE) * PGG_ENTRY_SIZE)
     .quad boot_pdpt_kernel + (PGG_PRESENT | PGG_WRITABLE)
 
 .balign PGG_PAGE_SIZE
@@ -171,10 +169,12 @@ boot_pd:
 
 .balign PGG_PAGE_SIZE
 boot_pdpt_kernel:
+    . = boot_pdpt_kernel + (PGG_PDPT_INDEX(CONFIG_KERNEL_BASE) * PGG_ENTRY_SIZE)
     .quad boot_pd_kernel + (PGG_PRESENT | PGG_WRITABLE)
 
 .balign PGG_PAGE_SIZE
 boot_pd_kernel:
+    . = boot_pd_kernel + (PGG_PD_INDEX(CONFIG_KERNEL_BASE) * PGG_ENTRY_SIZE)
     .quad _kernel_start + (PGG_PRESENT | PGG_WRITABLE | PGG_PS)
 
 #endif

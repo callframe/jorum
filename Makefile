@@ -1,6 +1,8 @@
 .DEFAULT_GOAL := all
 include toolchain.mk
 
+CONFIG_H := $(WORKING_DIR)/config.h
+
 ISO_DIR := $(WORKING_DIR)/iso
 BOOT_DIR := $(ISO_DIR)/boot
 BOOT_JORUM := $(BOOT_DIR)/jorum.elf
@@ -20,14 +22,14 @@ JORUM_ARCHIVES :=
 ifeq ($(TARGET_ARCH),x86_64)
 include $(X86_DIR)/Makefile
 
-LD_FLAGS += -T$(X86_DIR)/linker.ld -m64
+LD_FLAGS += -m64 -T$(X86_LINK)
 CC_FLAGS += -m64
 JORUM_ARCHIVES += $(X86_ARCHIVE)
 
 else ifeq ($(TARGET_ARCH),i386)
 include $(X86_DIR)/Makefile
 
-LD_FLAGS += -T$(X86_DIR)/linker.ld -m32
+LD_FLAGS += -m32 -T$(X86_LINK)
 CC_FLAGS += -m32
 JORUM_ARCHIVES += $(X86_ARCHIVE)
 else
