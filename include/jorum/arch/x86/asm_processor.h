@@ -179,4 +179,4 @@
  * Bit 29: Long Mode
  */
 
-#define CPUID_FUNCTION_EXTENDED_LM 29
+#define CPUID_EFUNC_EDX_LM CR_BIT(29)

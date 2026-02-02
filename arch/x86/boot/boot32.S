@@ -54,17 +54,17 @@ boot_x64_check:
     movl $CPUID_FUNCTION_EXTENDED, %eax
     cpuid
 
-    bt $CPUID_FUNCTION_EXTENDED_LM, %edx
-    jc 1f          # x64 supported
+    test $CPUID_EFUNC_EDX_LM, %edx
+    jnz 1f
 
-3: # not x64
+3: # no long mode support
     hlt
     jmp .
 
-2: # cpuid leaf not supported
+2: # cpuid does not have extended functions
     jmp 3b
 
-1: # x64 supported
+1: # long mode supported
     ret
 
 boot_x64:
