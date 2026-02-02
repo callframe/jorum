@@ -2,15 +2,7 @@
 #include <jorum/arch/x86/asm_gdt.h>
 #include <jorum/arch/x86/asm_paging.h>
 #include <jorum/arch/x86/asm_processor.h>
-
-#define ASM_FILE
-#include <jorum/multiboot.h>
-
-#define MULTIBOOT_ARCH 0x0
-#define MULTIBOOT_ALIGNMENT 8
-
-#define MULTIBOOT_END_TAG_TYPE 0
-#define MULTIBOOT_END_TAG_SIZE 8
+#include <jorum/arch/x86/asm_multiboot.h>
 
 # EAX Extended Processor Signature and Feature Bits.
 # https://www.felixcloutier.com/x86/cpuid
@@ -24,19 +16,19 @@
 .code32
 .section .multiboot, "a"
 multiboot_header:
-    .balign MULTIBOOT_ALIGNMENT
-    .long MULTIBOOT2_HEADER_MAGIC          # magic number
-    .long MULTIBOOT_ARCH           # architecture
+    .long MULTIBOOT2_HEADER_MAGIC                  # magic number
+    .long MULTIBOOT_ARCH_I386                      # architecture
     .long multiboot_header_end - multiboot_header  # header length
 
     #define MULTIBOOT_LEN (multiboot_header_end - multiboot_header)
-    #define MULTIBOOT_PRE_CHECKSUM (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCH + MULTIBOOT_LEN)
+    #define MULTIBOOT_PRE_CHECKSUM (MULTIBOOT2_HEADER_MAGIC + MULTIBOOT_ARCH_I386 + MULTIBOOT_LEN)
     #define MULTIBOOT_CHECKSUM (-MULTIBOOT_PRE_CHECKSUM)
-    .long MULTIBOOT_CHECKSUM     # checksum
+    .long MULTIBOOT_CHECKSUM                       # checksum
 
-    .balign MULTIBOOT_ALIGNMENT
-    .long MULTIBOOT_END_TAG_TYPE      # end tag type
-    .long MULTIBOOT_END_TAG_SIZE      # end tag size
+multiboot_end_tag:
+    .long MULTIBOOT_TAG_TYPE_END                       # end tag type
+    .long (multiboot_end_tag_end - multiboot_end_tag)  # end tag length
+multiboot_end_tag_end:
 multiboot_header_end:
 
 #if CONFIG_ARCH64
