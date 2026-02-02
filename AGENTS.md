@@ -40,7 +40,7 @@ Toolchain notes
 - Default toolchain is Clang/LLVM; GCC path is stubbed.
 - Global flags (freestanding, no builtin, no stdlib) are set by configure.
 
-Code style conventions (C/ASM/Linker/Shell/Make)
+Code style conventions (C/ASM/Linker/Shell/Make/Amber)
 
 General
 
@@ -89,6 +89,13 @@ Shell scripts (`config/*.sh`)
 - Fatal errors should call `panic` to exit with a clear message.
 - Sourcing uses `sh_source` which panics on failure.
 
+Amber scripts (`config/*.ab`)
+
+- Use `//` for single-line comments.
+- Constants are inlined directly as strings where needed.
+- Functions follow `get_<item>_var()`, `get_<item>_val()`, `get_<item>_msg()`, `format_<item>_msg(params)` patterns (though simplified by inlining).
+- Compile with `amber build <file.ab> > <output.sh>` to generate bash scripts.
+
 Error handling
 
 - Prefer explicit checks with descriptive failures:
@@ -109,11 +116,14 @@ Naming conventions summary
 - Assembly labels: `lowercase_with_underscores`.
 - Make variables: `UPPERCASE_WITH_UNDERSCORES` with suffix semantics.
 - Shell functions: `sh_*`, `fs_*`, `panic`.
+- Amber constants: `VAR_*`, `VAL_*`, `MSG_*` prefixes (when used).
+- Amber functions: `get_*`, `format_*` patterns (when used).
 
 Generated files (do not edit directly)
 
 - `toolchain.mk` (from `./configure.sh`).
 - `config.h` (from `config/config.in`).
+- `configure.sh` (compiled from `config/configure.ab`).
 
 Useful paths
 
@@ -135,3 +145,5 @@ What not to assume
 - No unit tests or lint tools exist currently.
 - No formatting/lint enforcement beyond existing conventions.
 - No Cursor/Copilot rule files in this repo.
+
+Note: `config/variables.ab` was removed and its constants inlined directly into `configure.ab` for simplicity.

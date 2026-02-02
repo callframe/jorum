@@ -1,0 +1,44 @@
+import { slice, char_at } from "std/text"
+
+pub fun panic(msg: Text) {
+    echo("PANIC: {msg}")
+    exit(1)
+}
+
+pub fun unreachable() {
+    panic("Reached unreachable code.")
+}
+
+pub fun gwd(): Text {
+    const res = $ pwd $ failed {
+        unreachable()
+    }
+
+    return res
+}
+
+pub fun which(cmd: Text): Text? {
+    const res = $ which {cmd} $ failed {
+        fail
+    }
+
+    return res
+}
+
+pub fun unquote(input: Text): Text? {
+    if len(input) < 2 {
+        return input
+    }
+
+    const first = char_at(input, 0)
+    const last  = char_at(input, len(input) - 1)
+
+    if first == "\"" or first == "'" {
+        if last != first {
+            fail
+        }
+        return slice(input, 1, len(input) - 2)
+    }
+
+    return input
+}

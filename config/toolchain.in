@@ -1,0 +1,80 @@
+# Auto-generated Makefile by configure.sh
+# DO NOT EDIT - Changes will be overwritten
+
+Q ?= @
+TARGET_ARCH := @TOOLCHAIN_TARGET_ARCH@
+
+## Paths
+WORKING_DIR := @TOOLCHAIN_WORKING_DIR@
+
+## Toolchain
+AS := @TOOLCHAIN_AS@
+
+CC := @TOOLCHAIN_CC@
+CC_FLAGS := @TOOLCHAIN_CC_FLAGS@
+PP_FLAGS := @TOOLCHAIN_PP_FLAGS@
+
+LD := @TOOLCHAIN_LD@
+LD_FLAGS := @TOOLCHAIN_LD_FLAGS@
+
+AR := @TOOLCHAIN_AR@
+AR_FLAGS := @TOOLCHAIN_AR_FLAGS@
+
+MKDIR := @TOOLCHAIN_MKDIR@
+MKDIR_FLAGS := @TOOLCHAIN_MKDIR_FLAGS@
+
+RM := @TOOLCHAIN_RM@
+RM_FLAGS := @TOOLCHAIN_RM_FLAGS@
+
+COPY := @TOOLCHAIN_COPY@
+
+GRUB := @TOOLCHAIN_GRUB@
+
+## Methods
+
+define notice
+	$(Q)echo "  $1$(notdir $2)"
+endef
+
+define make_dir
+	$(call notice,MKDIR ,$1)
+	$(Q)$(MKDIR) $(MKDIR_FLAGS) $1
+endef
+
+define compile_c
+	$(call notice,CC ,$1)
+	$(Q)$(CC) $(CC_FLAGS) -c $1 -o $2
+endef
+
+define preprocess_file
+	$(call notice,PP ,$2)
+	$(Q)$(CC) $(PP_FLAGS) $(CC_FLAGS) $1 -o $2
+endef
+
+define archive_objs
+	$(call notice,AR ,$2)
+	$(Q)$(AR) $(AR_FLAGS) $2 $1
+endef
+
+define link_objs
+	$(call notice,LD ,$2)
+	$(Q)$(CC) $1 $(LD_FLAGS) -o $2
+endef
+
+define remove_at
+	$(call notice,RM ,$1)
+	$(Q)$(RM) $(RM_FLAGS) $1
+endef
+
+define c2objs
+	$(patsubst %.c,%.o,$(filter %.c,$1))
+endef
+
+define asm2objs
+	$(patsubst %.S,%.o,$(filter %.S,$1))
+endef
+
+define copy_file
+	$(call notice,COPY ,$2)
+	$(Q)$(COPY) $1 $2
+endef

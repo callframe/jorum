@@ -1,0 +1,109 @@
+import { array_find } from "std/array"
+import { file_read, file_write, file_exists } from "std/fs"
+import { replace } from "std/text"
+
+import { parse_config, parsed_find } from "config/config.ab"
+import { panic, unreachable, gwd } from "config/helpers.ab"
+import { attach_var, toolchain, GET_X86_64_ARCH, GET_I386_ARCH } from "config/toolchain.ab"
+
+const WORKING_DIR = gwd()
+const CONFIG_DIR = "{WORKING_DIR}/config"
+
+const CONFIG_INPUT = "{CONFIG_DIR}/config.in"
+const CONFIG_FILE = "{WORKING_DIR}/config.toml"
+const CONFIG_HEADER = "{WORKING_DIR}/config.h"
+
+const TOOLCHAIN_TEMPLATE = "{CONFIG_DIR}/toolchain.in"
+const TOOLCHAIN_OUTPUT = "{WORKING_DIR}/toolchain.mk"
+
+// Constants for configuration keys and values
+const TARGET_ARCH_KEY = "TARGET_ARCH"
+const WORKING_DIR_KEY = "WORKING_DIR"
+const ARCH64_VAL = "ARCH64"
+const ARCH32_VAL = "ARCH32"
+
+// Constants for messages
+const FAILED_TO_READ_PREFIX = "Failed to read file at"
+
+fun get_config(): [Text] {
+    if not file_exists(CONFIG_FILE) {
+        panic("{FAILED_TO_READ_PREFIX} {CONFIG_FILE}")
+    }
+
+    const config_content = file_read(CONFIG_FILE) failed {
+       unreachable()
+    }
+
+    return parse_config(config_content);
+}
+
+fun template_key(key: Text, prefix: Text): Text {
+    return "@{prefix}_{key}@"
+}
+
+fun generate_from_template(config: [Text], template: Text, output_path: Text, prefix: Text) {
+    const stride = 2
+
+    const iters = len(config) / stride
+    for i in 0..iters {
+        const key = config[i * stride]
+        const value = config[i * stride + 1]
+
+        template = replace(template, template_key(key, prefix), value)
+    }
+
+    file_write(output_path, template) failed {
+        panic("{FAILED_TO_READ_PREFIX} {output_path}")
+    }
+}
+
+fun handle_arch(config: [Text], target_arch: Text): [Text] {
+    if target_arch == GET_X86_64_ARCH() {
+        config += [
+            ARCH64_VAL, "1",
+            ARCH32_VAL, "0"
+        ]
+    }
+
+    if target_arch == GET_I386_ARCH() {
+        config += [
+            ARCH64_VAL, "0",
+            ARCH32_VAL, "1"
+        ]
+    }
+
+    return config
+}
+
+main {
+    let config = get_config();
+    const target_arch = parsed_find(config, TARGET_ARCH_KEY) failed {
+        panic("Target architecture not found in configuration.")
+    }
+
+    config = handle_arch(config, target_arch);
+
+    if not file_exists(CONFIG_INPUT) {
+        panic("{FAILED_TO_READ_PREFIX} {CONFIG_INPUT}")
+    }
+
+    const template = file_read(CONFIG_INPUT) failed {
+        unreachable()
+    }
+
+    generate_from_template(config, template, CONFIG_HEADER, "CONFIG");
+
+    let tc = toolchain(target_arch)
+    if not file_exists(TOOLCHAIN_TEMPLATE) {
+        panic("{FAILED_TO_READ_PREFIX} {TOOLCHAIN_TEMPLATE}")
+    }
+
+    tc = attach_var(tc, TARGET_ARCH_KEY, target_arch)
+    tc = attach_var(tc, WORKING_DIR_KEY, WORKING_DIR)
+
+    const toolchain_template = file_read(TOOLCHAIN_TEMPLATE) failed {
+        unreachable()
+    }
+
+    generate_from_template(tc, toolchain_template, TOOLCHAIN_OUTPUT, "TOOLCHAIN")
+}

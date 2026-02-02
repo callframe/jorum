@@ -1,0 +1,94 @@
+import { which } from "helpers.ab"
+
+const ASSEMBLER_LABEL = "AS"
+const ASSEMBLER_BINARY = "clang"
+
+const CCOMPILER_LABEL = "CC"
+const CCOMPILER_BINARY = "clang"
+const CCOMPILER_FLAGS_LABEL = "CC_FLAGS"
+const CCOMPILER_FLAGS = "-ffreestanding -fno-builtin"
+const PP_FLAGS_LABEL = "PP_FLAGS"
+const PP_FLAGS = "-E -x assembler-with-cpp"
+
+const LINKER_LABEL = "LD"
+const LINKER_BINARY = "clang"
+const LINKER_FLAGS_LABEL = "LD_FLAGS"
+const LINKER_FLAGS = "-nostdlib -no-pie -Wl,--build-id=none"
+
+const ARCHIVER_LABEL = "AR"
+const ARCHIVER_BINARY = "ar"
+const ARCHIVER_FLAGS_LABEL = "AR_FLAGS"
+const ARCHIVER_FLAGS = "rcs"
+
+const MKDIR_LABEL = "MKDIR"
+const MKDIR_BINARY = "mkdir"
+const MKDIR_FLAGS_LABEL = "MKDIR_FLAGS"
+const MKDIR_FLAGS = "-p"
+
+const RM_LABEL = "RM"
+const RM_BINARY = "rm"
+const RM_FLAGS_LABEL = "RM_FLAGS"
+const RM_FLAGS = "-rf"
+
+const COPY_LABEL = "COPY"
+const COPY_BINARY = "cp"
+
+const GRUB_LABEL = "GRUB"
+const GRUB_BINARY = "grub-mkrescue"
+
+const X86_64_ARCH = "x86_64"
+const I386_ARCH = "i386"
+
+pub fun GET_X86_64_ARCH(): Text {
+    return X86_64_ARCH
+}
+
+pub fun GET_I386_ARCH(): Text {
+    return I386_ARCH
+}
+
+fun attach_tool(tc: [Text], label: Text, binary: Text): [Text] {
+    const path = which(binary) failed {
+        panic("Toolchain binary '{binary}' not found")
+    }
+
+    return tc + [label, path]
+}
+
+fun clang_triple(arch: Text): Text {
+    return "{arch}-unknown-none"
+}
+
+pub fun attach_var(tc: [Text], label: Text, value: Text): [Text] {
+    return tc + [label, value]
+}
+
+pub fun toolchain(arch: Text): [Text] {
+    let tc = []
+
+    tc = attach_tool(tc, ASSEMBLER_LABEL, ASSEMBLER_BINARY)
+   
+    tc = attach_tool(tc, CCOMPILER_LABEL, CCOMPILER_BINARY)
+    const ccompiler_triple = clang_triple(arch)
+    const ccompiler_flags = "{CCOMPILER_FLAGS} --target={ccompiler_triple}"
+    tc = attach_var(tc, CCOMPILER_FLAGS_LABEL, ccompiler_flags)
+    tc = attach_var(tc, PP_FLAGS_LABEL, PP_FLAGS)
+
+    tc = attach_tool(tc, LINKER_LABEL, LINKER_BINARY)
+    tc = attach_var(tc, LINKER_FLAGS_LABEL, LINKER_FLAGS)
+
+    tc = attach_tool(tc, ARCHIVER_LABEL, ARCHIVER_BINARY)
+    tc = attach_var(tc, ARCHIVER_FLAGS_LABEL, ARCHIVER_FLAGS)
+
+    tc = attach_tool(tc, MKDIR_LABEL, MKDIR_BINARY)
+    tc = attach_var(tc, MKDIR_FLAGS_LABEL, MKDIR_FLAGS)
+
+    tc = attach_tool(tc, RM_LABEL, RM_BINARY)
+    tc = attach_var(tc, RM_FLAGS_LABEL, RM_FLAGS)
+
+    tc = attach_tool(tc, COPY_LABEL, COPY_BINARY)
+
+    tc = attach_tool(tc, GRUB_LABEL, GRUB_BINARY)
+
+    return tc
+}

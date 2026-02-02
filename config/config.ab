@@ -1,0 +1,36 @@
+import { file_write } from "std/fs"
+import { split, trim, starts_with } from "std/text"
+import { array_find } from "std/array"
+import { unquote } from "helpers.ab"
+
+const LN_DELIMITER = "\n"
+const KV_DELIMITER = "="
+const SKIP_PREFIX = "#"
+
+pub fun parse_config(content: Text): [Text] {
+    const _lines = split(content, LN_DELIMITER)
+    let vec = []
+
+    for line in _lines {
+        const trimmed = trim(line)
+        if starts_with(trimmed, SKIP_PREFIX) or trimmed == "" {
+            continue
+        }
+
+        const parts = split(trimmed, KV_DELIMITER)
+        const key = trim(parts[0])
+        const value = unquote(trim(parts[1])) failed { continue }
+        
+        vec += [key, value]
+    }
+
+    return vec
+}
+
+pub fun parsed_find(parsed: [Text], key: Text): Text? {
+    const idx = array_find(parsed, key)
+    if idx == -1 {
+        fail
+    }
+    return parsed[idx + 1]
+}
