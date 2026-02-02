@@ -4,9 +4,6 @@
 // Volume 2 Chapter 3.1 - System-Control Registers
 // 2026-02-01: Found at page 495
 
-// https://docs.amd.com/v/u/en-US/40332-PUB_4.08
-// 2026-02-02: Appendix D.2 page 1874
-
 /*
  * CR0:
  * Used to control operating mode and states of the processor.
@@ -165,6 +162,9 @@
 
 /*
  * CPUID
+ * https://docs.amd.com/v/u/en-US/40332-PUB_4.08
+ * 2026-02-02: Appendix D.2 page 1874
+ *
  * Standard: 0000_0001h,
  * Extended: 8000_0001h
  * Structured Extended: 8000_0007h
