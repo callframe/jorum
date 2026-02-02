@@ -8,9 +8,9 @@
 
 #define GDT_MK_PRESENT(x) ((x) << 0x07)
 #define GDT_MK_PRIV(x) (((x) & 0x03) << 0x05)
-#define GDT_MK_LONG(x) ((x) << 0x0D)
-#define GDT_MK_WIDTH(x) ((x) << 0x0E)
-#define GDT_MK_GRAN(x) ((x) << 0x0F)
+#define GDT_MK_LONG(x) ((x) << 0x01)
+#define GDT_MK_WIDTH(x) ((x) << 0x02)
+#define GDT_MK_GRAN(x) ((x) << 0x03)
 
 #define GDT_RX 0x0A
 #define GDT_RW 0x02
