@@ -2,6 +2,8 @@
 
 // Virtual address structure (48-bit)
 // https://wiki.osdev.org/Paging
+// https://docs.amd.com/v/u/en-US/40332-PUB_4.08
+// 2026-02-02: Figure 5-17 page 579
 
 // Page table entry size
 #define PGG_ENTRY_SIZE 8
