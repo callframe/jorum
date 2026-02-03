@@ -6,12 +6,12 @@ gdt_load:
 #if CONFIG_ARCH64
     lgdt (%rdi)
 
-    pushq GDT_KERNEL_CODE_SELECTOR
+    pushq $GDT_KERNEL_CODE_SELECTOR
     lea 1f(%rip), %rax
     pushq %rax
     lretq
 1:
-    movw GDT_KERNEL_DATA_SELECTOR, %ax
+    movw $GDT_KERNEL_DATA_SELECTOR, %ax
     movw %ax, %ds
     movw %ax, %es
     movw %ax, %fs
