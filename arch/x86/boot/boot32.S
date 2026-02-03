@@ -1,8 +1,8 @@
 #include <config.h>
-#include <jorum/arch/x86/asm_gdt.h>
-#include <jorum/arch/x86/asm_paging.h>
-#include <jorum/arch/x86/asm_processor.h>
-#include <jorum/arch/x86/asm_multiboot.h>
+#include <jorum/arch/x86/asm/gdt.h>
+#include <jorum/arch/x86/asm/paging.h>
+#include <jorum/arch/x86/asm/processor.h>
+#include <jorum/arch/x86/asm/multiboot.h>
 
 .code32
 .section .multiboot, "a"
@@ -23,7 +23,6 @@ multiboot_end_tag_end:
 multiboot_header_end:
 
 #if CONFIG_ARCH64
-.section .boot.rodata, "a"
 boot_gdt_start:
 boot_gdt:
     .quad GDT_NULL_SEGMENT
@@ -45,7 +44,7 @@ boot_gdtr:
 #if CONFIG_ARCH64
 boot_x64_check:
 
-    movl $0x0, %eax
+    movl $CPUID_QUERY_MAX_EXTENDED, %eax
     cpuid
 
     cmpl $CPUID_FUNCTION_EXTENDED, %eax

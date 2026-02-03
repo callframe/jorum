@@ -3,9 +3,11 @@ X86_LINK := $(X86_DIR)/linker.ld
 
 X86_ARCHIVE := $(X86_DIR)/libx86.a
 X86_BOOT_DIR := $(X86_DIR)/boot
+X86_MEM_DIR := $(X86_DIR)/mem
 
 X86_SOURCES :=
 include $(X86_BOOT_DIR)/Makefile
+include $(X86_MEM_DIR)/Makefile
 
 X86_OBJECTS := $(call c2objs,$(X86_SOURCES))
 X86_OBJECTS += $(call asm2objs,$(X86_SOURCES))

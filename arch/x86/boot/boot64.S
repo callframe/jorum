@@ -1,4 +1,5 @@
-#include <jorum/arch/x86/asm_gdt.h>
+#include <jorum/arch/x86/asm/gdt.h>
+#include <jorum/arch/x86/asm/constants.h>
 
 .code64
 .section .boot, "ax"
@@ -13,6 +14,7 @@ enter_x64:
     mov %ax, %gs
     mov %ax, %ss
 
+    and $STACK_ALIGNMENT, %rsp
     movabs $kentry, %rax
     call *%rax
 

@@ -1,5 +1,7 @@
 void kentry(void) {
-    while (1) {
-        asm volatile("hlt");
-    }
+  // gdt_load(&BSP_GDTR);
+
+  while (1) {
+    asm volatile("hlt");
+  }
 }

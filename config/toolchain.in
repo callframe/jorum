@@ -67,11 +67,11 @@ define remove_at
 endef
 
 define c2objs
-	$(patsubst %.c,%.o,$(filter %.c,$1))
+	$(patsubst %.c,%.oc,$(filter %.c,$1))
 endef
 
 define asm2objs
-	$(patsubst %.S,%.o,$(filter %.S,$1))
+	$(patsubst %.S,%.os,$(filter %.S,$1))
 endef
 
 define copy_file

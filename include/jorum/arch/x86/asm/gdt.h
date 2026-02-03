@@ -1,8 +1,8 @@
 #pragma once
 
 #include <config.h>
-#include <jorum/arch/x86/asm_constants.h>
-#include <jorum/arch/x86/asm_gdtl.h>
+#include <jorum/arch/x86/asm/constants.h>
+#include <jorum/arch/x86/asm/gdtl.h>
 
 // GDT Making
 
