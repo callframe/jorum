@@ -13,7 +13,7 @@ X86_DIR := $(ARCH_DIR)/x86
 KERNEL_DIR := $(WORKING_DIR)/kernel
 
 INCLUDE_DIR := $(WORKING_DIR)/include
-CC_FLAGS += -I$(WORKING_DIR) -I$(INCLUDE_DIR) -g3 -mno-red-zone
+CC_FLAGS += -mcmodel=kernel -I$(WORKING_DIR) -I$(INCLUDE_DIR) -g3 -mno-red-zone
 
 include $(KERNEL_DIR)/Makefile
 
