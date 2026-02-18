@@ -21,6 +21,7 @@ config.h
 
 ### Binaries
 /jorum
+/run
 
 ### ISO / disk images
 *.iso

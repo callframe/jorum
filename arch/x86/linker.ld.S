@@ -36,25 +36,21 @@ SECTIONS {
     _kernel_start = ALIGN(_bootloader_end, 2M);
     . = KERNEL_BASE;
 
-    .text : AT(_kernel_start) {
+    _kphys_offset = _kernel_start - KERNEL_BASE;
+
+    .text : AT(ADDR(.text) + _kphys_offset) {
         *(.text*)
     } :ktext
 
-    _kernel_rodata_load = _kernel_start + SIZEOF(.text);
-
-    .rodata : AT(_kernel_rodata_load) {
+    .rodata : AT(ADDR(.rodata) + _kphys_offset) {
         *(.rodata*)
     } :ktext
 
-    _kernel_data_load = _kernel_rodata_load + SIZEOF(.rodata);
-
-    .data : AT(_kernel_data_load) {
+    .data : AT(ADDR(.data) + _kphys_offset) {
         *(.data*)
     } :kdata
 
-    _kernel_bss_load = _kernel_data_load + SIZEOF(.data);
-
-    .bss : AT(_kernel_bss_load) {
+    .bss : AT(ADDR(.bss) + _kphys_offset) {
         *(.bss*)
         *(COMMON)
     } :kdata
